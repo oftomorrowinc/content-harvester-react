@@ -1,0 +1,20 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    // Allow read/write access to uploads folder for development
+    // In production, implement proper authentication rules
+    match /uploads/{allPaths=**} {
+      allow read, write: if true; // Open for development/demo
+    }
+    
+    // Allow read/write access to content-harvester folders
+    match /content-harvester-{userId}/{allPaths=**} {
+      allow read, write: if true; // Open for development/demo
+    }
+    
+    // Default deny for all other files
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}
