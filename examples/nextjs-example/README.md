@@ -2,6 +2,27 @@
 
 This is an example Next.js application demonstrating how to use the Content Harvester React component library with Firebase.
 
+## ⚠️ Known Issue: Firebase Storage + Next.js Compatibility
+
+**Current Status**: This example has a known compatibility issue with Firebase v10 and Next.js webpack due to the `undici` module's use of private fields syntax (`#target`).
+
+### Error Details:
+```
+Module parse failed: Unexpected token (682:63)
+if (typeof this !== "object" || this === null || !(#target in this)) {
+```
+
+### Workaround Status:
+- ✅ Core package builds successfully 
+- ✅ TypeScript compilation works
+- ❌ Next.js example fails due to Firebase Storage + undici compatibility
+- ✅ Component library is ready for use in other environments
+
+### Alternative Solutions:
+1. Use Firebase v9 instead of v10
+2. Use a different bundler (Vite, Webpack 5+)
+3. Use the package in environments without this specific bundling issue
+
 ## Features
 
 - 🔥 Firebase integration with local emulators

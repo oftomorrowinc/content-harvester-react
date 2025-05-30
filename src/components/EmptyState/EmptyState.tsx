@@ -3,20 +3,20 @@ import clsx from 'clsx';
 
 export interface EmptyStateProps {
   /** Title for the empty state */
-  title?: string;
-  
+  title?: string | undefined;
+
   /** Description text */
-  description?: string;
-  
+  description?: string | undefined;
+
   /** Icon to display */
   icon?: React.ReactNode;
-  
+
   /** Action button */
   action?: React.ReactNode;
-  
+
   /** Additional CSS classes */
   className?: string;
-  
+
   /** Variant for different empty state types */
   variant?: 'default' | 'drop-zone' | 'no-results' | 'error';
 }
@@ -87,19 +87,19 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
       <div className="empty-state-icon">
         {displayIcon}
       </div>
-      
+
       {displayTitle && (
         <h3 className="empty-state-title">
           {displayTitle}
         </h3>
       )}
-      
+
       {displayDescription && (
         <p className="empty-state-description">
           {displayDescription}
         </p>
       )}
-      
+
       {action && (
         <div className="mt-6">
           {action}

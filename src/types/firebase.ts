@@ -8,22 +8,22 @@ import { FirebaseStorage } from 'firebase/storage';
 export interface FirebaseConfig {
   /** Firebase API key */
   apiKey: string;
-  
+
   /** Firebase Auth domain */
   authDomain: string;
-  
+
   /** Firebase project ID */
   projectId: string;
-  
+
   /** Firebase Storage bucket */
   storageBucket: string;
-  
+
   /** Firebase messaging sender ID */
   messagingSenderId: string;
-  
+
   /** Firebase app ID */
   appId: string;
-  
+
   /** Firebase measurement ID (optional, for Analytics) */
   measurementId?: string;
 }
@@ -34,19 +34,19 @@ export interface FirebaseConfig {
 export interface FirebaseEmulatorConfig {
   /** Whether emulators are enabled */
   enabled: boolean;
-  
+
   /** Firestore emulator host and port */
   firestore?: {
     host: string;
     port: number;
   };
-  
+
   /** Storage emulator host and port */
   storage?: {
     host: string;
     port: number;
   };
-  
+
   /** Auth emulator host and port (if using auth) */
   auth?: {
     host: string;
@@ -60,7 +60,7 @@ export interface FirebaseEmulatorConfig {
 export interface CompleteFirebaseConfig {
   /** Firebase project configuration */
   config: FirebaseConfig;
-  
+
   /** Emulator configuration (for development) */
   emulators?: FirebaseEmulatorConfig;
 }
@@ -71,10 +71,10 @@ export interface CompleteFirebaseConfig {
 export interface FirebaseServices {
   /** Firebase app instance */
   app: FirebaseApp;
-  
+
   /** Firestore database instance */
   firestore: Firestore;
-  
+
   /** Firebase Storage instance */
   storage: FirebaseStorage;
 }
@@ -85,13 +85,13 @@ export interface FirebaseServices {
 export interface FirebaseInitOptions {
   /** Firebase configuration */
   config: FirebaseConfig;
-  
+
   /** App name (optional, defaults to default) */
   appName?: string;
-  
+
   /** Whether to use emulators (development mode) */
   useEmulators?: boolean;
-  
+
   /** Emulator configuration */
   emulatorConfig?: FirebaseEmulatorConfig;
 }
@@ -99,7 +99,7 @@ export interface FirebaseInitOptions {
 /**
  * Firebase error types
  */
-export type FirebaseErrorCode = 
+export type FirebaseErrorCode =
   | 'permission-denied'
   | 'not-found'
   | 'already-exists'
@@ -138,10 +138,10 @@ export type FirebaseErrorCode =
 export interface FirebaseError {
   /** Error code */
   code: FirebaseErrorCode;
-  
+
   /** Error message */
   message: string;
-  
+
   /** Original error (if available) */
   originalError?: Error;
 }
@@ -172,7 +172,7 @@ export interface FirebaseTimestamp {
 /**
  * Firestore query constraint type
  */
-export type QueryConstraintType = 
+export type QueryConstraintType =
   | 'where'
   | 'orderBy'
   | 'limit'
@@ -208,13 +208,13 @@ export type OrderByDirection = 'asc' | 'desc';
 export interface UploadProgress {
   /** Bytes transferred */
   bytesTransferred: number;
-  
+
   /** Total bytes */
   totalBytes: number;
-  
+
   /** Upload state */
   state: 'running' | 'paused' | 'success' | 'canceled' | 'error';
-  
+
   /** Progress percentage (0-100) */
   progress: number;
 }
@@ -225,13 +225,13 @@ export interface UploadProgress {
 export interface UploadTask {
   /** Upload progress */
   progress: UploadProgress;
-  
+
   /** Cancel upload */
   cancel: () => boolean;
-  
+
   /** Pause upload */
   pause: () => boolean;
-  
+
   /** Resume upload */
   resume: () => boolean;
 }
@@ -242,19 +242,19 @@ export interface UploadTask {
 export interface StorageUploadOptions {
   /** Content type */
   contentType?: string;
-  
+
   /** Custom metadata */
   customMetadata?: Record<string, string>;
-  
+
   /** Cache control */
   cacheControl?: string;
-  
+
   /** Content disposition */
   contentDisposition?: string;
-  
+
   /** Content encoding */
   contentEncoding?: string;
-  
+
   /** Content language */
   contentLanguage?: string;
 }
@@ -266,11 +266,11 @@ export const DEFAULT_EMULATOR_CONFIG: FirebaseEmulatorConfig = {
   enabled: true,
   firestore: {
     host: 'localhost',
-    port: 8080,
+    port: 8082,
   },
   storage: {
     host: 'localhost',
-    port: 9199,
+    port: 9201,
   },
 };
 

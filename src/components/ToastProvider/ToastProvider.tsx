@@ -5,19 +5,19 @@ import clsx from 'clsx';
 export interface ToastContextValue {
   /** Show a toast message */
   toast: (message: string, options?: ToastOptions) => void;
-  
+
   /** Show a success toast */
   success: (message: string, options?: ToastOptions) => void;
-  
+
   /** Show an error toast */
   error: (message: string, options?: ToastOptions) => void;
-  
+
   /** Show a warning toast */
   warning: (message: string, options?: ToastOptions) => void;
-  
+
   /** Show an info toast */
   info: (message: string, options?: ToastOptions) => void;
-  
+
   /** Dismiss all toasts */
   dismiss: () => void;
 }
@@ -26,13 +26,13 @@ const ToastContext = createContext<ToastContextValue | null>(null);
 
 export interface ToastProviderProps {
   children: React.ReactNode;
-  
+
   /** Toast position */
   position?: 'top-left' | 'top-center' | 'top-right' | 'bottom-left' | 'bottom-center' | 'bottom-right';
-  
+
   /** Maximum number of toasts to show */
   maxToasts?: number;
-  
+
   /** Default duration for toasts */
   duration?: number;
 }
@@ -43,7 +43,7 @@ export interface ToastProviderProps {
 export const ToastProvider: React.FC<ToastProviderProps> = ({
   children,
   position = 'top-right',
-  maxToasts = 5,
+  maxToasts: _maxToasts = 5,
   duration = 4000,
 }) => {
   const [toastConfig] = useState({
@@ -167,11 +167,11 @@ export const ToastProvider: React.FC<ToastProviderProps> = ({
  */
 export const useToast = (): ToastContextValue => {
   const context = useContext(ToastContext);
-  
+
   if (!context) {
     throw new Error('useToast must be used within a ToastProvider');
   }
-  
+
   return context;
 };
 
@@ -181,16 +181,16 @@ export const useToast = (): ToastContextValue => {
 export interface SimpleToastProps {
   /** Toast message */
   message: string;
-  
+
   /** Toast type */
   type?: 'success' | 'error' | 'warning' | 'info';
-  
+
   /** Whether to show close button */
   showClose?: boolean;
-  
+
   /** Close callback */
   onClose?: () => void;
-  
+
   /** Additional CSS classes */
   className?: string;
 }
@@ -246,13 +246,13 @@ export const SimpleToast: React.FC<SimpleToastProps> = ({
         <div className="flex-shrink-0">
           {getIcon(type)}
         </div>
-        
+
         <div className="flex-1 min-w-0">
           <p className="text-sm font-medium text-dark-text-primary">
             {message}
           </p>
         </div>
-        
+
         {showClose && onClose && (
           <button
             type="button"

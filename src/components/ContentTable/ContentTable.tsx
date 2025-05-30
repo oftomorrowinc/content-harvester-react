@@ -1,12 +1,11 @@
 import React, { useMemo } from 'react';
 import clsx from 'clsx';
 import type { ContentItem } from '../../types';
-import { 
-  formatDate, 
-  formatFileSize, 
-  formatUrl, 
+import {
+  formatFileSize,
+  formatUrl,
   truncateText,
-  getFileExtension 
+  getFileExtension,
 } from '../../utils';
 import { StatusBadge } from '../StatusBadge';
 import { TypeBadge } from '../TypeBadge';
@@ -16,19 +15,19 @@ import { EmptyState } from '../EmptyState';
 export interface ContentTableColumn {
   /** Column key */
   key: string;
-  
+
   /** Column header text */
   header: string;
-  
+
   /** Column width (CSS value) */
   width?: string;
-  
+
   /** Whether column is sortable */
   sortable?: boolean;
-  
+
   /** Custom render function */
   render?: (item: ContentItem) => React.ReactNode;
-  
+
   /** CSS classes for the column */
   className?: string;
 }
@@ -36,47 +35,47 @@ export interface ContentTableColumn {
 export interface ContentTableProps {
   /** Array of content items to display */
   items: ContentItem[];
-  
+
   /** Loading state */
   loading?: boolean;
-  
+
   /** Custom columns configuration */
   columns?: ContentTableColumn[];
-  
+
   /** Callback when item is deleted */
   onDelete?: (item: ContentItem) => void;
-  
+
   /** Callback when anonymize is toggled */
   onToggleAnonymize?: (item: ContentItem, anonymize: boolean) => void;
-  
+
   /** Callback when item is selected */
   onSelect?: (item: ContentItem) => void;
-  
+
   /** Whether to show selection checkboxes */
   selectable?: boolean;
-  
+
   /** Selected item IDs */
   selectedIds?: Set<string>;
-  
+
   /** Sort configuration */
   sort?: {
     key: string;
     direction: 'asc' | 'desc';
   };
-  
+
   /** Callback when sort changes */
   onSortChange?: (key: string, direction: 'asc' | 'desc') => void;
-  
+
   /** Empty state configuration */
   emptyState?: {
     title?: string;
     description?: string;
     action?: React.ReactNode;
   };
-  
+
   /** Additional CSS classes */
   className?: string;
-  
+
   /** Maximum height for the table */
   maxHeight?: string;
 }
@@ -138,9 +137,9 @@ export const ContentTable: React.FC<ContentTableProps> = ({
       width: '10%',
       sortable: true,
       render: (item) => (
-        <TypeBadge 
-          type={item.type} 
-          showIcon 
+        <TypeBadge
+          type={item.type}
+          showIcon
           fileExtension={item.type === 'file' ? getFileExtension(item.name) : undefined}
         />
       ),
@@ -190,11 +189,12 @@ export const ContentTable: React.FC<ContentTableProps> = ({
               className="action-btn action-btn-delete"
               title={`Delete ${item.name}`}
             >
-              <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path
-                  fillRule="evenodd"
-                  d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9zM4 5a2 2 0 012-2h8a2 2 0 012 2v6a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 112 0v3a1 1 0 11-2 0V9zm4 0a1 1 0 112 0v3a1 1 0 11-2 0V9z"
-                  clipRule="evenodd"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1-1H9a1 1 0 00-1 1v3M4 7h16"
                 />
               </svg>
             </button>
@@ -208,10 +208,10 @@ export const ContentTable: React.FC<ContentTableProps> = ({
 
   const handleSort = (key: string) => {
     if (!onSortChange) return;
-    
+
     const currentDirection = sort?.key === key ? sort.direction : 'desc';
     const newDirection = currentDirection === 'asc' ? 'desc' : 'asc';
-    
+
     onSortChange(key, newDirection);
   };
 
@@ -283,7 +283,7 @@ export const ContentTable: React.FC<ContentTableProps> = ({
                   />
                 </th>
               )}
-              
+
               {displayColumns.map((column) => (
                 <th
                   key={column.key}
@@ -306,7 +306,7 @@ export const ContentTable: React.FC<ContentTableProps> = ({
               ))}
             </tr>
           </thead>
-          
+
           <tbody className="content-table-body">
             {items.map((item) => (
               <tr
@@ -314,7 +314,7 @@ export const ContentTable: React.FC<ContentTableProps> = ({
                 className={clsx(
                   'content-table-row',
                   selectable && 'cursor-pointer',
-                  selectedIds.has(item.id) && 'bg-dark-accent-primary bg-opacity-10'
+                  selectedIds.has(item.id) && 'bg-dark-accent-primary bg-opacity-10',
                 )}
                 onClick={() => handleSelectItem(item)}
               >
@@ -329,7 +329,7 @@ export const ContentTable: React.FC<ContentTableProps> = ({
                     />
                   </td>
                 )}
-                
+
                 {displayColumns.map((column) => (
                   <td
                     key={column.key}

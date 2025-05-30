@@ -6,10 +6,10 @@ import { formatStatus, getStatusColorClass } from '../../utils';
 export interface StatusBadgeProps {
   /** The status to display */
   status: ContentStatus;
-  
+
   /** Additional CSS classes */
   className?: string;
-  
+
   /** Whether to show an icon */
   showIcon?: boolean;
 }
@@ -31,6 +31,12 @@ export const StatusBadge: React.FC<StatusBadgeProps> = ({
         return (
           <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
             <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clipRule="evenodd" />
+          </svg>
+        );
+      case 'added':
+        return (
+          <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+            <path fillRule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clipRule="evenodd" />
           </svg>
         );
       case 'processing':
@@ -63,7 +69,7 @@ export const StatusBadge: React.FC<StatusBadgeProps> = ({
         'status-badge',
         colorClass,
         showIcon && 'flex items-center gap-1',
-        className
+        className,
       )}
     >
       {showIcon && getStatusIcon(status)}

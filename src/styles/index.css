@@ -78,6 +78,10 @@
     @apply bg-dark-status-pending bg-opacity-20 text-dark-status-pending;
   }
 
+  .status-added {
+    @apply bg-blue-500 bg-opacity-20 text-blue-400;
+  }
+
   .status-processing {
     @apply bg-dark-status-processing bg-opacity-20 text-dark-status-processing;
   }

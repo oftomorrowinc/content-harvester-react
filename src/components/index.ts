@@ -21,8 +21,8 @@ export { ToastProvider, useToast, SimpleToast } from './ToastProvider';
 export type { ToastProviderProps, ToastContextValue, SimpleToastProps } from './ToastProvider';
 
 export { ContentHarvester, ContentHarvesterProvider, useContentHarvester } from './ContentHarvester';
-export type { 
-  ContentHarvesterProps, 
-  ContentHarvesterProviderProps, 
-  ContentHarvesterContextValue 
+export type {
+  ContentHarvesterProps,
+  ContentHarvesterProviderProps,
+  ContentHarvesterContextValue,
 } from './ContentHarvester';

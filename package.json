@@ -2,6 +2,7 @@
   "name": "@content-harvester/react",
   "version": "1.0.0",
   "description": "A React TypeScript component library for collecting content from URLs and files with Firebase backend support",
+  "type": "module",
   "main": "dist/index.js",
   "module": "dist/index.esm.js",
   "types": "dist/index.d.ts",
@@ -19,7 +20,7 @@
     "./styles": "./dist/styles.css"
   },
   "scripts": {
-    "dev": "concurrently \"npm run emulators\" \"npm run storybook\"",
+    "dev": "npm run example:dev",
     "build": "rollup -c",
     "build:watch": "rollup -c -w",
     "typecheck": "tsc --noEmit",
@@ -37,7 +38,7 @@
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
     "example:setup": "cd examples/nextjs-example && npm install",
-    "example:dev": "concurrently \"npm run emulators\" \"cd examples/nextjs-example && npm run dev\"",
+    "example:dev": "cd examples/nextjs-example && npm run dev",
     "example:build": "cd examples/nextjs-example && npm run build",
     "prepublishOnly": "npm run lint && npm run typecheck && npm run test && npm run build",
     "release": "semantic-release"
@@ -67,7 +68,7 @@
   "peerDependencies": {
     "react": ">=17.0.0",
     "react-dom": ">=17.0.0",
-    "firebase": ">=9.0.0"
+    "firebase": "^9.0.0"
   },
   "dependencies": {
     "clsx": "^2.0.0",
@@ -111,7 +112,7 @@
     "eslint-plugin-react": "^7.33.2",
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-storybook": "^0.6.15",
-    "firebase": "^10.7.1",
+    "firebase": "^9.23.0",
     "firebase-tools": "^13.0.2",
     "husky": "^8.0.3",
     "jest": "^29.7.0",

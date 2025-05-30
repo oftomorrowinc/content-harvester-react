@@ -7,6 +7,11 @@ service cloud.firestore {
       allow read, write: if true; // Open for development/demo
     }
     
+    // Demo content collection for examples
+    match /demo-content/{contentId} {
+      allow read, write: if true; // Open for development/demo
+    }
+    
     // Allow read/write for any collection starting with "content-harvester-"
     // This allows different instances to use their own collections
     match /{collection}/{document} {

@@ -4,19 +4,19 @@ import clsx from 'clsx';
 export interface ToggleSwitchProps {
   /** Whether the toggle is checked */
   checked: boolean;
-  
+
   /** Callback when toggle state changes */
   onChange: (checked: boolean) => void;
-  
+
   /** Whether the toggle is disabled */
   disabled?: boolean;
-  
+
   /** Label for accessibility */
   label?: string;
-  
+
   /** Additional CSS classes */
   className?: string;
-  
+
   /** Size variant */
   size?: 'sm' | 'md' | 'lg';
 }
@@ -69,14 +69,14 @@ export const ToggleSwitch: React.FC<ToggleSwitchProps> = ({
       <span
         className={clsx(
           'toggle-slider',
-          disabled && 'opacity-50 cursor-not-allowed'
+          disabled && 'opacity-50 cursor-not-allowed',
         )}
       >
         <span
           className={clsx(
             'toggle-slider:before',
             sliderSizeClasses[size],
-            checked && translateClasses[size]
+            checked && translateClasses[size],
           )}
         />
       </span>

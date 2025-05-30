@@ -8,7 +8,7 @@ import type { ContentStatus, ContentType } from '../types';
  */
 export function formatDate(date: Date | string, format: 'short' | 'long' | 'relative' | 'time' = 'short'): string {
   const dateObj = date instanceof Date ? date : new Date(date);
-  
+
   if (isNaN(dateObj.getTime())) {
     return 'Invalid date';
   }
@@ -19,13 +19,13 @@ export function formatDate(date: Date | string, format: 'short' | 'long' | 'rela
   switch (format) {
     case 'relative':
       return formatRelativeTime(diff);
-    
+
     case 'time':
       return dateObj.toLocaleTimeString(undefined, {
         hour: '2-digit',
         minute: '2-digit',
       });
-    
+
     case 'long':
       return dateObj.toLocaleDateString(undefined, {
         year: 'numeric',
@@ -34,7 +34,7 @@ export function formatDate(date: Date | string, format: 'short' | 'long' | 'rela
         hour: '2-digit',
         minute: '2-digit',
       });
-    
+
     case 'short':
     default:
       return dateObj.toLocaleDateString(undefined, {
@@ -85,15 +85,17 @@ export function formatRelativeTime(diffMs: number): string {
 export function formatFileSize(bytes: number, decimals: number = 1): string {
   if (!bytes || bytes === 0) return '0 B';
   if (bytes < 0) return 'Invalid size';
-  
+
   const k = 1024;
   const dm = decimals < 0 ? 0 : decimals;
   const sizes = ['B', 'KB', 'MB', 'GB', 'TB', 'PB'];
-  
+
   const i = Math.floor(Math.log(bytes) / Math.log(k));
   const size = bytes / Math.pow(k, i);
-  
-  return `${size.toFixed(dm)} ${sizes[i]}`;
+
+  // Don't show decimals for bytes
+  const displayDecimals = i === 0 ? 0 : dm;
+  return `${size.toFixed(displayDecimals)} ${sizes[i]}`;
 }
 
 /**
@@ -104,11 +106,12 @@ export function formatFileSize(bytes: number, decimals: number = 1): string {
 export function formatStatus(status: ContentStatus): string {
   const statusMap: Record<ContentStatus, string> = {
     pending: 'Pending',
+    added: 'Added',
     processing: 'Processing',
     completed: 'Completed',
     error: 'Error',
   };
-  
+
   return statusMap[status] || status;
 }
 
@@ -120,11 +123,12 @@ export function formatStatus(status: ContentStatus): string {
 export function getStatusColorClass(status: ContentStatus): string {
   const colorMap: Record<ContentStatus, string> = {
     pending: 'status-pending',
+    added: 'status-added',
     processing: 'status-processing',
     completed: 'status-completed',
     error: 'status-error',
   };
-  
+
   return colorMap[status] || 'status-pending';
 }
 
@@ -138,7 +142,7 @@ export function formatContentType(type: ContentType): string {
     url: 'URL',
     file: 'File',
   };
-  
+
   return typeMap[type] || type;
 }
 
@@ -152,7 +156,7 @@ export function getContentTypeColorClass(type: ContentType): string {
     url: 'type-url',
     file: 'type-file',
   };
-  
+
   return colorMap[type] || 'type-file';
 }
 
@@ -167,11 +171,11 @@ export function truncateText(text: string, maxLength: number, ellipsis: string =
   if (!text || typeof text !== 'string') {
     return '';
   }
-  
+
   if (text.length <= maxLength) {
     return text;
   }
-  
+
   return text.slice(0, maxLength - ellipsis.length) + ellipsis;
 }
 
@@ -185,27 +189,27 @@ export function formatUrl(url: string, maxLength: number = 50): string {
   if (!url || typeof url !== 'string') {
     return '';
   }
-  
+
   try {
     const urlObj = new URL(url);
     const domain = urlObj.hostname;
     const path = urlObj.pathname + urlObj.search;
-    
+
     if (url.length <= maxLength) {
       return url;
     }
-    
+
     // Try to show domain + truncated path
     const domainPart = `${urlObj.protocol}//${domain}`;
     const remainingLength = maxLength - domainPart.length - 3; // 3 for "..."
-    
+
     if (remainingLength > 0 && path.length > 0) {
-      const truncatedPath = path.length > remainingLength 
-        ? '...' + path.slice(-remainingLength) 
+      const truncatedPath = path.length > remainingLength
+        ? '...' + path.slice(-remainingLength)
         : path;
       return domainPart + truncatedPath;
     }
-    
+
     return truncateText(url, maxLength);
   } catch {
     return truncateText(url, maxLength);
@@ -223,7 +227,7 @@ export function formatPercentage(value: number, isDecimal: boolean = true, decim
   if (typeof value !== 'number' || isNaN(value)) {
     return '0%';
   }
-  
+
   const percentage = isDecimal ? value * 100 : value;
   return `${percentage.toFixed(decimals)}%`;
 }
@@ -238,7 +242,7 @@ export function formatNumber(num: number, locale?: string): string {
   if (typeof num !== 'number' || isNaN(num)) {
     return '0';
   }
-  
+
   return num.toLocaleString(locale);
 }
 
@@ -251,7 +255,7 @@ export function capitalizeWords(text: string): string {
   if (!text || typeof text !== 'string') {
     return '';
   }
-  
+
   return text.replace(/\b\w/g, letter => letter.toUpperCase());
 }
 
@@ -264,7 +268,7 @@ export function camelToReadable(text: string): string {
   if (!text || typeof text !== 'string') {
     return '';
   }
-  
+
   return text
     .replace(/([A-Z])/g, ' $1')
     .replace(/^./, str => str.toUpperCase())
@@ -280,12 +284,12 @@ export function formatDuration(ms: number): string {
   if (typeof ms !== 'number' || ms < 0) {
     return '0ms';
   }
-  
+
   const seconds = Math.floor(ms / 1000);
   const minutes = Math.floor(seconds / 60);
   const hours = Math.floor(minutes / 60);
   const days = Math.floor(hours / 24);
-  
+
   if (days > 0) {
     return `${days}d ${hours % 24}h`;
   } else if (hours > 0) {
@@ -309,13 +313,13 @@ export function generateInitials(text: string, maxLength: number = 2): string {
   if (!text || typeof text !== 'string') {
     return '';
   }
-  
+
   const words = text.trim().split(/\s+/);
   const initials = words
     .map(word => word.charAt(0).toUpperCase())
     .slice(0, maxLength)
     .join('');
-  
+
   return initials;
 }
 
@@ -328,19 +332,19 @@ export function formatError(error: unknown): string {
   if (!error) {
     return 'An unknown error occurred';
   }
-  
+
   if (typeof error === 'string') {
     return error;
   }
-  
+
   if (error instanceof Error) {
     return error.message || 'An error occurred';
   }
-  
+
   if (typeof error === 'object' && 'message' in error) {
     return String((error as { message: unknown }).message);
   }
-  
+
   return 'An unknown error occurred';
 }
 
@@ -355,7 +359,7 @@ export function pluralize(count: number, singular: string, plural?: string): str
   if (count === 1) {
     return singular;
   }
-  
+
   return plural || `${singular}s`;
 }
 

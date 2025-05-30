@@ -79,44 +79,81 @@ content-harvester-react/
 - **Firebase v9+** - Modular SDK for Firestore and Storage
 - **Jest + React Testing Library** - Comprehensive testing framework
 
-## Implementation Plan
+## Quick Start
 
-### Phase 1: Foundation Setup ✅
-- [x] Project structure and configuration
-- [ ] TypeScript configuration with strict mode
-- [ ] Package.json with proper npm package setup
-- [ ] Tailwind CSS with dark theme configuration
-- [ ] ESLint + Prettier configuration
+### Installation
 
-### Phase 2: Core Infrastructure 🔄
-- [ ] Firebase configuration and types
-- [ ] Content model and TypeScript interfaces
-- [ ] URL extraction and validation utilities
-- [ ] File validation and upload utilities
+```bash
+npm install @content-harvester/react firebase
+```
 
-### Phase 3: React Components 📅
-- [ ] ContentTable component with virtual scrolling
-- [ ] DropZone component with drag & drop
-- [ ] ToastProvider for notifications
-- [ ] Status badges and toggle components
+### Basic Usage
 
-### Phase 4: React Hooks 📅
-- [ ] useContentManager hook for CRUD operations
-- [ ] useFirebase hook for backend operations
-- [ ] useDragDrop hook for file handling
-- [ ] useToast hook for notifications
+```tsx
+import { ContentHarvester, ContentHarvesterProvider } from '@content-harvester/react';
+import '@content-harvester/react/styles';
 
-### Phase 5: Testing & Examples 📅
-- [ ] Comprehensive Jest + RTL test suite
-- [ ] Component integration tests
-- [ ] Hook tests with mock Firebase
-- [ ] Next.js example application
+const firebaseConfig = {
+  // Your Firebase configuration
+  apiKey: "your-api-key",
+  authDomain: "your-project.firebaseapp.com",
+  projectId: "your-project-id",
+  storageBucket: "your-project.appspot.com",
+  messagingSenderId: "123456789",
+  appId: "your-app-id"
+};
 
-### Phase 6: Documentation & Publishing 📅
-- [ ] API documentation with TypeDoc
-- [ ] Usage examples and guides
-- [ ] Performance optimization
-- [ ] NPM package publishing setup
+function App() {
+  return (
+    <ContentHarvesterProvider
+      firebaseConfig={firebaseConfig}
+      useEmulators={process.env.NODE_ENV === 'development'}
+      config={{
+        collection: 'my-content',
+        fileConfig: {
+          maxFileSize: 10 * 1024 * 1024, // 10MB
+          allowedExtensions: ['.pdf', '.jpg', '.png', '.txt'],
+        },
+        urlConfig: {
+          allowedProtocols: ['http:', 'https:'],
+          maxUrlLength: 2048,
+        },
+      }}
+    >
+      <ContentHarvester 
+        onContentAdded={(count) => console.log(`Added ${count} items`)}
+        showUrlInput={true}
+        showFileUpload={true}
+        maxHeight="500px"
+      />
+    </ContentHarvesterProvider>
+  );
+}
+```
+
+### Development Setup
+
+1. **Clone the Repository**
+   ```bash
+   git clone https://github.com/content-harvester/react.git
+   cd content-harvester-react
+   npm install
+   ```
+
+2. **Start Firebase Emulators**
+   ```bash
+   npm run emulators
+   ```
+
+3. **Run Example App**
+   ```bash
+   npm run example:dev
+   ```
+
+4. **Run Tests**
+   ```bash
+   npm test
+   ```
 
 ## Key Design Decisions
 

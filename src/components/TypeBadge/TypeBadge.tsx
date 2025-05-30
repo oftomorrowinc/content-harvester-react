@@ -6,15 +6,15 @@ import { formatContentType, getContentTypeColorClass } from '../../utils';
 export interface TypeBadgeProps {
   /** The content type to display */
   type: ContentType;
-  
+
   /** Additional CSS classes */
   className?: string;
-  
+
   /** Whether to show an icon */
   showIcon?: boolean;
-  
+
   /** File extension for files (to show more specific icon) */
-  fileExtension?: string;
+  fileExtension?: string | undefined;
 }
 
 /**
@@ -41,7 +41,7 @@ export const TypeBadge: React.FC<TypeBadgeProps> = ({
     // File type icons based on extension
     if (extension) {
       const ext = extension.toLowerCase();
-      
+
       // Image files
       if (['.jpg', '.jpeg', '.png', '.gif', '.webp', '.svg'].includes(ext)) {
         return (
@@ -50,7 +50,7 @@ export const TypeBadge: React.FC<TypeBadgeProps> = ({
           </svg>
         );
       }
-      
+
       // Video files
       if (['.mp4', '.mov', '.avi', '.mkv', '.webm'].includes(ext)) {
         return (
@@ -59,7 +59,7 @@ export const TypeBadge: React.FC<TypeBadgeProps> = ({
           </svg>
         );
       }
-      
+
       // Audio files
       if (['.mp3', '.wav', '.m4a', '.aac', '.ogg'].includes(ext)) {
         return (
@@ -68,7 +68,7 @@ export const TypeBadge: React.FC<TypeBadgeProps> = ({
           </svg>
         );
       }
-      
+
       // Document files
       if (['.pdf', '.doc', '.docx', '.txt', '.md'].includes(ext)) {
         return (
@@ -77,7 +77,7 @@ export const TypeBadge: React.FC<TypeBadgeProps> = ({
           </svg>
         );
       }
-      
+
       // Archive files
       if (['.zip', '.rar', '.7z', '.tar', '.gz'].includes(ext)) {
         return (
@@ -102,7 +102,7 @@ export const TypeBadge: React.FC<TypeBadgeProps> = ({
         'type-badge',
         colorClass,
         showIcon && 'flex items-center gap-1',
-        className
+        className,
       )}
     >
       {showIcon && getTypeIcon(type, fileExtension)}

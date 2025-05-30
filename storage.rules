@@ -7,8 +7,8 @@ service firebase.storage {
       allow read, write: if true; // Open for development/demo
     }
     
-    // Allow read/write access to content-harvester folders
-    match /content-harvester-{userId}/{allPaths=**} {
+    // Allow read/write access to demo uploads folder
+    match /demo-uploads/{allPaths=**} {
       allow read, write: if true; // Open for development/demo
     }
     

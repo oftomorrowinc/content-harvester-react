@@ -1,12 +1,11 @@
 import { useState, useEffect, useCallback } from 'react';
 import { initializeApp, FirebaseApp, getApps } from 'firebase/app';
-import { 
-  getFirestore, 
-  Firestore, 
+import {
+  getFirestore,
   connectFirestoreEmulator,
   doc,
   collection,
-  addDoc,
+  setDoc,
   updateDoc,
   deleteDoc,
   getDoc,
@@ -15,15 +14,13 @@ import {
   orderBy,
   where,
   limit,
-  startAfter,
   DocumentSnapshot,
   QueryConstraint,
   serverTimestamp,
   Timestamp,
 } from 'firebase/firestore';
-import { 
-  getStorage, 
-  FirebaseStorage, 
+import {
+  getStorage,
   connectStorageEmulator,
   ref,
   uploadBytes,
@@ -33,11 +30,11 @@ import {
 } from 'firebase/storage';
 import { v4 as uuidv4 } from 'uuid';
 
-import type { 
-  FirebaseConfig, 
-  FirebaseServices, 
-  ContentItem, 
-  CreateContentData, 
+import type {
+  FirebaseConfig,
+  FirebaseServices,
+  ContentItem,
+  CreateContentData,
   UpdateContentData,
   FileUploadResult,
   ContentQueryOptions,
@@ -50,13 +47,13 @@ import { DEFAULT_EMULATOR_CONFIG } from '../types';
 export interface UseFirebaseOptions {
   /** Firebase configuration */
   config: FirebaseConfig;
-  
+
   /** Whether to use emulators (for development) */
   useEmulators?: boolean;
-  
+
   /** Emulator configuration */
   emulatorConfig?: FirebaseEmulatorConfig;
-  
+
   /** App name for Firebase initialization */
   appName?: string;
 }
@@ -64,13 +61,13 @@ export interface UseFirebaseOptions {
 export interface UseFirebaseReturn {
   /** Firebase services */
   services: FirebaseServices | null;
-  
+
   /** Loading state */
   loading: boolean;
-  
+
   /** Error state */
   error: string | null;
-  
+
   /** Whether Firebase is ready */
   ready: boolean;
 }
@@ -107,19 +104,19 @@ export const useFirebase = ({
 
         // Initialize Firestore
         const firestore = getFirestore(app);
-        
+
         // Initialize Storage
         const storage = getStorage(app);
 
         // Connect to emulators if needed
         if (useEmulators && emulatorConfig.enabled) {
           // Connect Firestore emulator
-          if (emulatorConfig.firestore && !firestore._delegate._terminated) {
+          if (emulatorConfig.firestore) {
             try {
               connectFirestoreEmulator(
                 firestore,
                 emulatorConfig.firestore.host,
-                emulatorConfig.firestore.port
+                emulatorConfig.firestore.port,
               );
             } catch (e) {
               // Emulator might already be connected
@@ -133,7 +130,7 @@ export const useFirebase = ({
               connectStorageEmulator(
                 storage,
                 emulatorConfig.storage.host,
-                emulatorConfig.storage.port
+                emulatorConfig.storage.port,
               );
             } catch (e) {
               // Emulator might already be connected
@@ -168,11 +165,11 @@ export const useFirebase = ({
 
 export interface UseFirebaseOperationsOptions {
   /** Firebase services */
-  services: FirebaseServices;
-  
+  services: FirebaseServices | null;
+
   /** Firestore collection name */
   collection: string;
-  
+
   /** Storage path for file uploads */
   storagePath?: string;
 }
@@ -180,25 +177,25 @@ export interface UseFirebaseOperationsOptions {
 export interface UseFirebaseOperationsReturn {
   /** Create a new content item */
   createContent: (data: CreateContentData) => Promise<ContentItem>;
-  
+
   /** Update an existing content item */
   updateContent: (id: string, data: UpdateContentData) => Promise<ContentItem>;
-  
+
   /** Delete a content item */
   deleteContent: (id: string) => Promise<void>;
-  
+
   /** Get a content item by ID */
   getContent: (id: string) => Promise<ContentItem | null>;
-  
+
   /** Query content items */
   queryContent: (options?: ContentQueryOptions) => Promise<ContentQueryResult>;
-  
+
   /** Upload a file to Firebase Storage */
   uploadFile: (file: File, options?: StorageUploadOptions) => Promise<FileUploadResult>;
-  
+
   /** Delete a file from Firebase Storage */
   deleteFile: (storageRef: string) => Promise<void>;
-  
+
   /** Get download URL for a file */
   getFileUrl: (storageRef: string) => Promise<string>;
 }
@@ -212,9 +209,12 @@ export const useFirebaseOperations = ({
   storagePath = 'uploads',
 }: UseFirebaseOperationsOptions): UseFirebaseOperationsReturn => {
   const createContent = useCallback(async (data: CreateContentData): Promise<ContentItem> => {
+    if (!services) {
+      throw new Error('Firebase services not initialized');
+    }
     const { firestore } = services;
     const id = uuidv4();
-    
+
     const contentData: Omit<ContentItem, 'id'> = {
       ...data,
       status: 'pending',
@@ -224,7 +224,7 @@ export const useFirebaseOperations = ({
     };
 
     const docRef = doc(firestore, collectionName, id);
-    await updateDoc(docRef, {
+    await setDoc(docRef, {
       ...contentData,
       createdAt: serverTimestamp(),
       updatedAt: serverTimestamp(),
@@ -234,35 +234,41 @@ export const useFirebaseOperations = ({
   }, [services, collectionName]);
 
   const updateContent = useCallback(async (id: string, data: UpdateContentData): Promise<ContentItem> => {
+    if (!services) {
+      throw new Error('Firebase services not initialized');
+    }
     const { firestore } = services;
-    
+
     const docRef = doc(firestore, collectionName, id);
     const updateData = {
       ...data,
       updatedAt: serverTimestamp(),
     };
-    
+
     await updateDoc(docRef, updateData);
-    
+
     // Get updated document
     const updatedDoc = await getDoc(docRef);
     if (!updatedDoc.exists()) {
       throw new Error(`Content item ${id} not found`);
     }
-    
+
     return convertFirestoreDoc(updatedDoc);
   }, [services, collectionName]);
 
   const deleteContent = useCallback(async (id: string): Promise<void> => {
+    if (!services) {
+      throw new Error('Firebase services not initialized');
+    }
     const { firestore } = services;
-    
+
     // Get the document to check if it has a file to delete
     const docRef = doc(firestore, collectionName, id);
     const docSnap = await getDoc(docRef);
-    
+
     if (docSnap.exists()) {
       const contentItem = convertFirestoreDoc(docSnap);
-      
+
       // Delete associated file if it exists
       if (contentItem.storageRef) {
         try {
@@ -272,67 +278,73 @@ export const useFirebaseOperations = ({
         }
       }
     }
-    
+
     // Delete the document
     await deleteDoc(docRef);
   }, [services, collectionName]);
 
   const getContent = useCallback(async (id: string): Promise<ContentItem | null> => {
+    if (!services) {
+      throw new Error('Firebase services not initialized');
+    }
     const { firestore } = services;
-    
+
     const docRef = doc(firestore, collectionName, id);
     const docSnap = await getDoc(docRef);
-    
+
     if (!docSnap.exists()) {
       return null;
     }
-    
+
     return convertFirestoreDoc(docSnap);
   }, [services, collectionName]);
 
   const queryContent = useCallback(async (options?: ContentQueryOptions): Promise<ContentQueryResult> => {
+    if (!services) {
+      throw new Error('Firebase services not initialized');
+    }
     const { firestore } = services;
-    
+
     const constraints: QueryConstraint[] = [];
-    
+
     // Add filters
     if (options?.filter) {
       const { filter } = options;
-      
+
       if (filter.type) {
         constraints.push(where('type', '==', filter.type));
       }
-      
+
       if (filter.status) {
         constraints.push(where('status', '==', filter.status));
       }
-      
+
       if (filter.dateRange) {
         constraints.push(where('createdAt', '>=', filter.dateRange.start));
         constraints.push(where('createdAt', '<=', filter.dateRange.end));
       }
     }
-    
+
     // Add sorting
     const sortField = options?.sort?.field || 'createdAt';
     const sortDirection = options?.sort?.direction || 'desc';
     constraints.push(orderBy(sortField, sortDirection));
-    
+
     // Add pagination
     if (options?.pagination?.limit) {
       constraints.push(limit(options.pagination.limit));
     }
-    
+
     if (options?.pagination?.startAfter) {
       // This would require the last document from the previous query
       // For now, we'll implement basic pagination
     }
-    
+
     const q = query(collection(firestore, collectionName), ...constraints);
     const querySnapshot = await getDocs(q);
-    
+
     const items = querySnapshot.docs.map(convertFirestoreDoc);
-    
+
     return {
       items,
       hasMore: items.length === (options?.pagination?.limit || 0),
@@ -341,12 +353,15 @@ export const useFirebaseOperations = ({
   }, [services, collectionName]);
 
   const uploadFile = useCallback(async (file: File, options?: StorageUploadOptions): Promise<FileUploadResult> => {
+    if (!services) {
+      throw new Error('Firebase services not initialized');
+    }
     const { storage } = services;
-    
+
     const filename = `${uuidv4()}-${file.name}`;
     const filePath = `${storagePath}/${filename}`;
     const storageRef = ref(storage, filePath);
-    
+
     const metadata = {
       contentType: file.type,
       customMetadata: {
@@ -355,10 +370,10 @@ export const useFirebaseOperations = ({
       },
       ...options,
     };
-    
+
     const uploadResult: UploadResult = await uploadBytes(storageRef, file, metadata);
     const downloadURL = await getDownloadURL(uploadResult.ref);
-    
+
     return {
       storageRef: filePath,
       url: downloadURL,
@@ -369,15 +384,21 @@ export const useFirebaseOperations = ({
   }, [services, storagePath]);
 
   const deleteFile = useCallback(async (storageRef: string): Promise<void> => {
+    if (!services) {
+      throw new Error('Firebase services not initialized');
+    }
     const { storage } = services;
-    
+
     const fileRef = ref(storage, storageRef);
     await deleteObject(fileRef);
   }, [services]);
 
   const getFileUrl = useCallback(async (storageRef: string): Promise<string> => {
+    if (!services) {
+      throw new Error('Firebase services not initialized');
+    }
     const { storage } = services;
-    
+
     const fileRef = ref(storage, storageRef);
     return await getDownloadURL(fileRef);
   }, [services]);
@@ -399,7 +420,7 @@ export const useFirebaseOperations = ({
  */
 function convertFirestoreDoc(doc: DocumentSnapshot): ContentItem {
   const data = doc.data()!;
-  
+
   return {
     id: doc.id,
     type: data.type,

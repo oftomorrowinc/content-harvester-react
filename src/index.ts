@@ -1,9 +1,9 @@
 // Main exports
 export { ContentHarvester, ContentHarvesterProvider, useContentHarvester } from './components/ContentHarvester';
-export type { 
-  ContentHarvesterProps, 
-  ContentHarvesterProviderProps, 
-  ContentHarvesterContextValue 
+export type {
+  ContentHarvesterProps,
+  ContentHarvesterProviderProps,
+  ContentHarvesterContextValue,
 } from './components/ContentHarvester';
 
 // Component exports

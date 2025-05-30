@@ -14,17 +14,17 @@ export function extractUrls(text: string, config: UrlConfig = DEFAULT_URL_CONFIG
 
   // Split text into lines and trim whitespace
   const lines = text.split(/\r?\n/).map(line => line.trim());
-  
+
   // Filter lines that start with allowed protocols
   const urlLines = lines.filter(line => {
-    return config.allowedProtocols.some(protocol => 
-      line.toLowerCase().startsWith(protocol)
+    return config.allowedProtocols.some(protocol =>
+      line.toLowerCase().startsWith(protocol),
     );
   });
 
   // Validate and filter URLs
   const validUrls: string[] = [];
-  
+
   for (const urlLine of urlLines) {
     // Extract the first URL-like string from the line
     const urlMatch = urlLine.match(/^(https?:\/\/[^\s]+)/i);
@@ -77,7 +77,7 @@ export function validateUrl(url: string, config: UrlConfig = DEFAULT_URL_CONFIG)
   }
 
   let parsedUrl: URL;
-  
+
   try {
     parsedUrl = new URL(trimmedUrl);
   } catch (error) {
@@ -104,7 +104,7 @@ export function validateUrl(url: string, config: UrlConfig = DEFAULT_URL_CONFIG)
       const normalizedBlocked = blockedDomain.toLowerCase();
       return hostname === normalizedBlocked || hostname.endsWith(`.${normalizedBlocked}`);
     });
-    
+
     if (isBlocked) {
       return {
         url: trimmedUrl,
@@ -121,7 +121,7 @@ export function validateUrl(url: string, config: UrlConfig = DEFAULT_URL_CONFIG)
       const normalizedAllowed = allowedDomain.toLowerCase();
       return hostname === normalizedAllowed || hostname.endsWith(`.${normalizedAllowed}`);
     });
-    
+
     if (!isAllowed) {
       return {
         url: trimmedUrl,
@@ -148,18 +148,18 @@ export function validateUrl(url: string, config: UrlConfig = DEFAULT_URL_CONFIG)
 function normalizeUrl(url: URL): string {
   // Convert hostname to lowercase
   url.hostname = url.hostname.toLowerCase();
-  
+
   // Remove default port numbers
   if ((url.protocol === 'http:' && url.port === '80') ||
       (url.protocol === 'https:' && url.port === '443')) {
     url.port = '';
   }
-  
+
   // Remove trailing slash from pathname if it's just '/'
   if (url.pathname === '/') {
     url.pathname = '';
   }
-  
+
   return url.toString();
 }
 
@@ -199,7 +199,7 @@ export function extractDomain(url: string): string | null {
  */
 export async function isUrlReachable(url: string): Promise<boolean> {
   try {
-    const response = await fetch(url, { 
+    const response = await fetch(url, {
       method: 'HEAD',
       mode: 'no-cors',
       cache: 'no-cache',
@@ -233,7 +233,7 @@ export async function getUrlMetadata(url: string): Promise<{
   domain: string;
 }> {
   const domain = extractDomain(url);
-  
+
   // In a real implementation, this would fetch the page and parse meta tags
   // For now, we'll return basic metadata
   return {
@@ -254,7 +254,7 @@ export function urlToFilename(url: string): string {
     const domain = parsedUrl.hostname;
     const path = parsedUrl.pathname.replace(/\//g, '_');
     const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
-    
+
     return `${domain}${path}_${timestamp}.url`;
   } catch {
     return `invalid_url_${Date.now()}.url`;
@@ -268,7 +268,7 @@ export function urlToFilename(url: string): string {
  */
 export function isImageUrl(url: string): boolean {
   const imageExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp', '.svg', '.bmp', '.ico'];
-  
+
   try {
     const parsedUrl = new URL(url);
     const pathname = parsedUrl.pathname.toLowerCase();
@@ -285,7 +285,7 @@ export function isImageUrl(url: string): boolean {
  */
 export function isVideoUrl(url: string): boolean {
   const videoExtensions = ['.mp4', '.mov', '.avi', '.mkv', '.webm', '.flv', '.wmv'];
-  
+
   try {
     const parsedUrl = new URL(url);
     const pathname = parsedUrl.pathname.toLowerCase();
@@ -303,9 +303,9 @@ export function isVideoUrl(url: string): boolean {
 export function getContentTypeFromUrl(url: string): 'image' | 'video' | 'document' | 'unknown' {
   if (isImageUrl(url)) return 'image';
   if (isVideoUrl(url)) return 'video';
-  
+
   const documentExtensions = ['.pdf', '.doc', '.docx', '.txt', '.md'];
-  
+
   try {
     const parsedUrl = new URL(url);
     const pathname = parsedUrl.pathname.toLowerCase();
@@ -315,6 +315,6 @@ export function getContentTypeFromUrl(url: string): 'image' | 'video' | 'documen
   } catch {
     return 'unknown';
   }
-  
+
   return 'unknown';
 }

@@ -23,7 +23,6 @@ export {
   isImageFile,
   isVideoFile,
   isAudioFile,
-  formatFileSize,
   getMimeTypeFromExtension,
   sanitizeFilename,
   generateUniqueFilename,
@@ -33,6 +32,7 @@ export {
 export {
   formatDate,
   formatRelativeTime,
+  formatFileSize,
   formatStatus,
   getStatusColorClass,
   formatContentType,
